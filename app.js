@@ -248,9 +248,7 @@ export const questions = [
         ],
         correctAnswer: 1
     }
-
 ];
-
 
 // Step 2: JavaScript Initialization
 const quiz = document.querySelector("#quiz");
@@ -259,12 +257,13 @@ const [questionElm, option_1, option_2, option_3, option_4] =
 document.querySelectorAll("#question, option_1, option_2, option_3, option_4 ");
 
 const submitBtn = document.querySelector("#submit");
+const viewAnswersBtn = document.querySelector("#view-answers");
 
 let currentQuiz = 0;
 let score = 0;
+let userAnswers = [];
 
 // Step 3: Load Quiz function
-
 const loadQuiz = () => {
     const {question, options} = questions[currentQuiz];
 
@@ -275,7 +274,6 @@ const loadQuiz = () => {
 loadQuiz();
 
 // Step 4: Get selected answer function on button click
-
 const getSelectedOption = () => {
     let answerElement = Array.from(answerElm)
     return answerElement.findIndex((curElement) => curElement.checked );
@@ -287,6 +285,7 @@ const deselectedAnswer = () => {
 
 submitBtn.addEventListener("click", () => {
     const selectedOptionIndex = getSelectedOption();
+    userAnswers.push(selectedOptionIndex);
 
     if (selectedOptionIndex === questions[currentQuiz].correctAnswer) {
         score++;
@@ -298,12 +297,24 @@ submitBtn.addEventListener("click", () => {
     } else {
         quiz.innerHTML = `<div class="result">
         <h2>🏆🥇 Your Score: ${score}/${questions.length} Correct Answers</h2>
-        <P>🎊✨ Congratulations on compeleting the quiz!</p>
-        <p>Don't loose hope and never give up! You can do it 💪🏻</p>
-        <button class = "reload-button" onclick = "window.location.reload()"> Restart </button>
+        <P>🎊✨ Congratulations on completing the quiz!</p>
+        <p>Don't lose hope and never give up! You can do it 💪🏻</p>
+        <button class = "reload-button" onclick = "window.location.reload()">Restart</button>
+        <button id="view-answers-btn">View Answers</button>
         </div>`;
+        document.querySelector("#view-answers-btn").addEventListener("click", () => {
+            displayAnswers();
+        });
     }
-
 });
 
-
+const displayAnswers = () => {
+    let answerHTML = `<div class="result view-answers"><h2>Correct Answers</h2>`;
+    questions.forEach((question, index) => {
+        answerHTML += `<p>Q${index + 1}: ${question.question}</p>`;
+        answerHTML += `<p>Your answer: ${question.options[userAnswers[index]]}</p>`;
+        answerHTML += `<p>Correct answer: ${question.options[question.correctAnswer]}</p><hr>`;
+    });
+    answerHTML += `<button class="reload-button" onclick="window.location.reload()">Restart</button></div>`;
+    quiz.innerHTML = answerHTML;
+};
